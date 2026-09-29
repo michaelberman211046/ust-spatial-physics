@@ -1,4 +1,4 @@
-# Checkpoint release checklist
+﻿# Checkpoint release checklist
 
 The publication source repository deliberately excludes large checkpoints and generated caches. Before public release, archive only the five final checkpoints and the split metadata required for measured inference:
 
@@ -9,12 +9,7 @@ The publication source repository deliberately excludes large checkpoints and ge
 - `spatial_physics_reconstructor_clean.pt`
 - `ultrasound_data_20000_pairs_splits.pt`
 
-Upload them to a durable research-data service and replace the placeholders below:
-
-```text
-Archive DOI: REPLACE_WITH_ARCHIVE_DOI
-Archive URL: REPLACE_WITH_ARCHIVE_URL
-```
+Upload them to a durable research-data service when the corresponding public release is prepared. Record the archive DOI, archive URL, release version, and file checksums in this document at that time.
 
 Record a SHA-256 checksum for every released file. In PowerShell:
 
@@ -23,6 +18,7 @@ Get-FileHash -Algorithm SHA256 path/to/checkpoint
 ```
 
 Do not publish superseded checkpoints, optimizer scratch files, cached debug tensors, or copies of the upstream Ali data.
+
 
 
 
