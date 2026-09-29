@@ -1,0 +1,23 @@
+﻿cff-version: 1.2.0
+message: "If you use this software, please cite the accompanying manuscript and the Ali et al. dataset paper."
+title: "Spatial Physics-Informed Neural Reconstruction for Ultrasound Travel-Time Tomography"
+type: software
+version: "1.0.0"
+date-released: 2026-09-29
+license: MIT
+repository-code: "https://github.com/michaelberman211046/ust-spatial-physics"
+authors:
+  - family-names: "Hefter"
+    given-names: "Hadassah"
+  - family-names: "Berman"
+    given-names: "Michael"
+preferred-citation:
+  type: article
+  title: "Spatial Physics-Informed Neural Reconstruction for Ultrasound Travel-Time Tomography"
+  authors:
+    - family-names: "Hefter"
+      given-names: "Hadassah"
+    - family-names: "Berman"
+      given-names: "Michael"
+  journal: "Sensors"
+  year: 2026

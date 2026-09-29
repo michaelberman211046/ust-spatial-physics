@@ -1,0 +1,50 @@
+pipeline: publication
+manuscript: accompanying-manuscript
+random_seed: 52
+domain:
+  grid: [200, 200]
+  physical_size_m: [0.24, 0.24]
+  ring_radius_m: 0.1091
+  emitters: 512
+  receivers: 512
+synthetic_data:
+  samples: 20000
+  tof_normalization: zscore
+  limited_view_excluded_fraction: 0.25
+  shape_mode: mixed
+  shapes_per_sample: [45, 120]
+training:
+  initial_reconstruction_epochs_max: 140
+  autoencoder_epochs_max: 30
+  matched_operator_epochs_max: 80
+  acquisition_robust_background_epochs_max: 12
+  spatial_physics_epochs_max: 18
+  train_samples_refiners_max: 12000
+  validation_samples_max: 512
+measured_processing:
+  tof_variant: geom_window_matched_template
+  threshold_relative: 0.15
+  template_count: 2048
+  calibration_component_limit_us: 0.75
+  support_radius_quantile: 0.70
+physical_refinement:
+  grid_size: 100
+  ray_samples: 96
+  emitter_stride: 2
+  receiver_stride: 2
+  angular_sectors: 8
+  holdout_sectors: [0, 2, 4, 6]
+  steps: 120
+  learning_rate: 0.035
+  maximum_correction_mps: 120
+  minimum_holdout_improvement_us: 0.01
+  minimum_accepted_folds: 2
+authoritative_commands: run_full.ps1
+
+
+
+
+
+
+
+
