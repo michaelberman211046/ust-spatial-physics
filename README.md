@@ -4,18 +4,18 @@ This repository is the software package accompanying the manuscript. It contains
 
 ## Scientific scope
 
-All trainable neural-network parameters are learned from synthetic examples. The measured case is not used to train or fine-tune those networks. The measured RF data are converted to time of flight (ToF), aligned to the acquisition geometry, passed through the frozen learned stack, and then processed by the bounded physical-ray refinement implemented in Stage 10.
+All trainable neural-network parameters are learned from synthetic examples. The measured case is not used to train or fine-tune those networks. The measured RF data are converted to time of flight (ToF), aligned to the acquisition geometry, passed through the frozen learned stack, and then processed by bounded straight-ray and Eikonal refinements.
 
 The waveform-inversion reconstruction distributed by Ali et al. is attached only for retrospective evaluation and display. It is not supplied to the learned model, timing calibration objective, support estimation, or physical-refinement objective.
 
-The measured-data workflow includes the accepted Stage-10 held-out-sector physical refinement described by the accompanying manuscript.
+For both synthetic and measured reconstructions, the post-inference Eikonal calculation uses a coarse correction followed by an edge-aware fine correction. Angularly withheld transmitter sectors determine whether a proposed correction is retained. The measured-data parameterization also removes the spatially uniform correction mode and represents a bounded common timing residual separately from the image update.
 
 ## Repository layout
 
 - `src/`: only the active publication pipeline modules and their direct local dependencies.
 - `configs/run_full.ps1`: exact end-to-end command used for the reported run.
 - `configs/run_technical_pilot.ps1`: reduced technical smoke test; not a scientific reproduction.
-- `configs/run_measured_inference_from_checkpoints.ps1`: Stages 9--10 only, using trained checkpoints.
+- `configs/run_measured_inference_from_checkpoints.ps1`: measured RF-to-ToF processing, frozen-model inference, and physical refinement using trained checkpoints.
 - `configs/reported_configuration.yaml`: readable summary of the reported configuration.
 - `tools/validate_repository.py`: verifies package completeness and Python syntax.
 - `docs/`: data-acquisition, checkpoint-release, and provenance documentation.
@@ -72,7 +72,7 @@ powershell -ExecutionPolicy Bypass -File configs/run_full.ps1 `
   -Device "cuda"
 ```
 
-The full run creates 20,000 synthetic examples, trains all network stages, evaluates the synthetic test set, extracts measured ToF, performs measured-data inference, and generates the physical-ray result. It is computationally expensive. The exact command file is the authoritative hyperparameter record.
+The full run creates 20,000 synthetic examples, trains all learned components, evaluates the synthetic validation subset, applies coarse and fine synthetic Eikonal refinement, extracts measured ToFs, performs measured-data inference, and applies the straight-ray and two-resolution Eikonal refinements. It is computationally expensive. The exact command file is the authoritative hyperparameter record.
 
 To check installation and data flow on a small workload first:
 

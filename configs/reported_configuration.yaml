@@ -39,6 +39,46 @@ physical_refinement:
   maximum_correction_mps: 120
   minimum_holdout_improvement_us: 0.01
   minimum_accepted_folds: 2
+synthetic_eikonal_refinement:
+  coarse:
+    emitter_stride: 4
+    receiver_stride: 2
+    correction_grid: 64
+    iterations: 3
+    inner_steps: 50
+    maximum_correction_mps: 15
+    huber_transition_us: 0.20
+    minimum_holdout_improvement_us: 0.005
+  fine:
+    emitter_stride: 4
+    receiver_stride: 2
+    correction_grid: 96
+    iterations: 2
+    inner_steps: 45
+    maximum_correction_mps: 7
+    huber_transition_us: 0.15
+    minimum_holdout_improvement_us: 0.002
+measured_eikonal_refinement:
+  coarse:
+    emitter_stride: 4
+    receiver_stride: 2
+    correction_grid: 64
+    iterations: 3
+    inner_steps: 50
+    maximum_correction_mps: 15
+    maximum_mean_update_mps: 1.5
+    maximum_rms_update_mps: 8.0
+    minimum_accepted_folds: 3
+  fine:
+    emitter_stride: 4
+    receiver_stride: 2
+    correction_grid: 96
+    iterations: 2
+    inner_steps: 45
+    maximum_correction_mps: 7
+    maximum_mean_update_mps: 0.75
+    maximum_rms_update_mps: 3.0
+    minimum_accepted_folds: 3
 authoritative_commands: run_full.ps1
 
 

@@ -42,6 +42,18 @@ $RAY_SETUP = "$RUN/physical_setup.pt"
 $RECON = "$RUN/physical_reconstruction.pt"
 $STAGE8_REPORT = "$TRAIN/synthetic_evaluation/synthetic_evaluation_report.npz"
 $PHYSICAL_REPORT = "$RUN/physical_report.npz"
+$SYNTHETIC_COARSE_DIR = "$TRAIN/synthetic_eikonal_coarse"
+$SYNTHETIC_FINE_DIR = "$TRAIN/synthetic_eikonal_fine"
+$SYNTHETIC_COARSE_PT = "$SYNTHETIC_COARSE_DIR/refinement.pt"
+$SYNTHETIC_COARSE_REPORT = "$SYNTHETIC_COARSE_DIR/report.npz"
+$SYNTHETIC_FINE_PT = "$SYNTHETIC_FINE_DIR/refinement.pt"
+$SYNTHETIC_FINE_REPORT = "$SYNTHETIC_FINE_DIR/report.npz"
+$MEASURED_COARSE_DIR = "$RUN/eikonal_coarse"
+$MEASURED_FINE_DIR = "$RUN/eikonal_fine"
+$MEASURED_COARSE_PT = "$MEASURED_COARSE_DIR/refinement.pt"
+$MEASURED_COARSE_REPORT = "$MEASURED_COARSE_DIR/report.npz"
+$MEASURED_FINE_PT = "$MEASURED_FINE_DIR/refinement.pt"
+$MEASURED_FINE_REPORT = "$MEASURED_FINE_DIR/report.npz"
 
 $RUN_STAGE_0 = $true
 $RUN_STAGE_1 = $true
@@ -59,7 +71,9 @@ $RUN_STAGE_10 = $true
   "src/train_background_refiner.py","src/train_spatial_physics.py","src/evaluate_synthetic_reconstruction.py",
   "src/plot_synthetic_evaluation.py","src/extract_measured_tof.py",
   "src/attach_evaluation_reference.py","src/build_experimental_setup.py","src/build_physical_ray_setup.py",
-  "src/reconstruct_physical_ray.py","src/plot_physical_ray.py","src/self_test.py","src/measured_geometry.py","src/align_experimental.py","src/logger.py","src/settings.py"
+  "src/reconstruct_physical_ray.py","src/plot_physical_ray.py","src/self_test.py","src/measured_geometry.py","src/align_experimental.py","src/logger.py","src/settings.py",
+  "src/refine_synthetic_eikonal_coarse.py","src/refine_synthetic_eikonal_fine.py","src/measured_eikonal_refinement.py",
+  "src/refine_measured_eikonal_coarse.py","src/refine_measured_eikonal_fine.py","src/msfm.py"
 ) | ForEach-Object { Need $_ }
 if (-not $RUN_STAGE_0) { Need $DATA; Need $SPLITS }
 if (-not $RUN_STAGE_1) { Need $BASE }
@@ -127,6 +141,11 @@ if ($RUN_STAGE_8) {
   $env:MPLBACKEND = "Agg"
   python src/plot_synthetic_evaluation.py --report_npz "$STAGE8_REPORT" --output_dir "$TRAIN/synthetic_evaluation/report/"
   OK "Stage 8 report"
+  New-Item -ItemType Directory -Force -Path $SYNTHETIC_COARSE_DIR,$SYNTHETIC_FINE_DIR | Out-Null
+  python src/refine_synthetic_eikonal_coarse.py --data_path "$DATA" --initial_report "$STAGE8_REPORT" --out_pt "$SYNTHETIC_COARSE_PT" --report_npz "$SYNTHETIC_COARSE_REPORT" --output_dir "$SYNTHETIC_COARSE_DIR" --device "$DEVICE" --emitter_stride 4 --receiver_stride 2 --angular_sectors 8 --holdout_sectors "0,2,4,6" --outer_iterations 3 --inner_steps 50 --correction_grid 64 --lr 0.05 --update_limit_mps 15 --huber_beta_us 0.20 --prior_weight 0.15 --tv_weight 0.02 --curvature_weight 0.01 --min_holdout_improvement_us 0.005 --trace_step_pixels 0.75 --trace_max_steps 420 --mask_radius 0.1091
+  OK "Synthetic coarse Eikonal refinement"
+  python src/refine_synthetic_eikonal_fine.py --data_path "$DATA" --coarse_report "$SYNTHETIC_COARSE_REPORT" --out_pt "$SYNTHETIC_FINE_PT" --report_npz "$SYNTHETIC_FINE_REPORT" --output_dir "$SYNTHETIC_FINE_DIR" --device "$DEVICE" --emitter_stride 4 --receiver_stride 2 --angular_sectors 8 --holdout_sectors "0,2,4,6" --fine_iterations 2 --inner_steps 45 --fine_grid 96 --lr 0.035 --fine_limit_mps 7 --huber_beta_us 0.15 --prior_weight 0.22 --edge_tv_weight 0.035 --curvature_weight 0.012 --min_holdout_improvement_us 0.002 --min_accepted_folds 2 --trace_step_pixels 0.65 --trace_max_steps 480 --mask_radius 0.1091
+  OK "Synthetic fine Eikonal refinement"
 }
 
 if ($RUN_STAGE_9) {
@@ -149,6 +168,11 @@ if ($RUN_STAGE_10) {
   $env:MPLBACKEND = "Agg"
   python src/plot_physical_ray.py --report_npz "$PHYSICAL_REPORT" --output_dir "$RUN/report/"
   OK "Stage 10b final report"
+  New-Item -ItemType Directory -Force -Path $MEASURED_COARSE_DIR,$MEASURED_FINE_DIR | Out-Null
+  python src/refine_measured_eikonal_coarse.py --setup_pt "$RAY_SETUP" --initial_pt "$RECON" --out_pt "$MEASURED_COARSE_PT" --report_npz "$MEASURED_COARSE_REPORT" --output_dir "$MEASURED_COARSE_DIR" --device "$DEVICE" --emitter_stride 4 --receiver_stride 2 --angular_sectors 8 --holdout_sectors "0,2,4,6" --outer_iterations 3 --inner_steps 50 --correction_grid 64 --lr 0.05 --update_limit_mps 15 --huber_beta_us 0.20 --prior_weight 0.15 --tv_weight 0.02 --curvature_weight 0.01 --min_holdout_improvement_us 0.005 --trace_step_pixels 0.75 --trace_max_steps 420 --min_accepted_folds 3 --max_mean_update_mps 1.5 --max_rms_update_mps 8.0
+  OK "Measured coarse Eikonal refinement"
+  python src/refine_measured_eikonal_fine.py --setup_pt "$RAY_SETUP" --coarse_pt "$MEASURED_COARSE_PT" --out_pt "$MEASURED_FINE_PT" --report_npz "$MEASURED_FINE_REPORT" --output_dir "$MEASURED_FINE_DIR" --device "$DEVICE" --emitter_stride 4 --receiver_stride 2 --angular_sectors 8 --holdout_sectors "0,2,4,6" --fine_iterations 2 --inner_steps 45 --fine_grid 96 --lr 0.035 --fine_limit_mps 7 --huber_beta_us 0.15 --prior_weight 0.22 --edge_tv_weight 0.035 --curvature_weight 0.012 --min_holdout_improvement_us 0.002 --min_accepted_folds 3 --trace_step_pixels 0.65 --trace_max_steps 480 --max_mean_update_mps 0.75 --max_rms_update_mps 3.0
+  OK "Measured fine Eikonal refinement"
 }
 
 Write-Host "Pipeline completed successfully under $RUN" -ForegroundColor Green

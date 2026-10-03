@@ -3,7 +3,7 @@
 - Computational pipeline source: `src/`.
 - Authoritative experimental configuration: `configs/run_full.ps1`.
 
-`evaluate_synthetic_reconstruction.py` exports multiple synthetic test reconstructions using the frozen Stage-7 checkpoint and evaluation path. Report generation does not train or modify model weights.
+`evaluate_synthetic_reconstruction.py` exports multiple synthetic validation reconstructions using the frozen learned stack. `refine_synthetic_eikonal_coarse.py` and `refine_synthetic_eikonal_fine.py` perform the subsequent held-out-sector Eikonal corrections. The measured reconstruction follows the straight-ray result with `refine_measured_eikonal_coarse.py` and `refine_measured_eikonal_fine.py`. None of these post-inference operations trains or modifies model weights.
 
 The package intentionally omits:
 

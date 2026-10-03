@@ -17,6 +17,9 @@ REQUIRED = [
     "src/measured_geometry.py", "src/self_test.py", "src/reporting/__init__.py",
     "src/build_experimental_setup.py", "src/build_physical_ray_setup.py",
     "src/reconstruct_physical_ray.py",
+    "src/refine_synthetic_eikonal_coarse.py", "src/refine_synthetic_eikonal_fine.py",
+    "src/measured_eikonal_refinement.py", "src/refine_measured_eikonal_coarse.py",
+    "src/refine_measured_eikonal_fine.py",
 ]
 
 
