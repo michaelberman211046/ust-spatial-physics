@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "seed": 4647462,
+  "pilot_samples": 3,
+  "refinement_budget_hours": 12.0,
+  "refinement_max_samples": 100,
+  "sensitivity_samples": 8,
+  "batch_size": 1,
+  "emitter_stride": 4,
+  "receiver_stride": 2,
+  "coarse": {
+    "angular_sectors": 8, "holdout_sectors": "0,2,4,6",
+    "outer_iterations": 3, "inner_steps": 50, "correction_grid": 64,
+    "lr": 0.05, "update_limit_mps": 15.0, "huber_beta_us": 0.20,
+    "prior_weight": 0.15, "tv_weight": 0.02, "curvature_weight": 0.01,
+    "min_holdout_improvement_us": 0.005,
+    "trace_step_pixels": 0.75, "trace_max_steps": 420
+  },
+  "fine": {
+    "angular_sectors": 8, "holdout_sectors": "0,2,4,6",
+    "fine_iterations": 2, "inner_steps": 45, "fine_grid": 96,
+    "lr": 0.035, "fine_limit_mps": 7.0, "huber_beta_us": 0.15,
+    "prior_weight": 0.22, "edge_tv_weight": 0.035, "curvature_weight": 0.012,
+    "min_holdout_improvement_us": 0.002, "min_accepted_folds": 2,
+    "trace_step_pixels": 0.65, "trace_max_steps": 480
+  },
+  "classical": {
+    "max_iterations": 12, "lsqr_iterations": 150,
+    "gradient_weight": 0.10, "amplitude_weight": 0.005,
+    "step_limit_mps": 40.0, "validation_sectors": [0,4],
+    "minimum_improvement_us": 0.0001
+  },
+  "tof_conditions": [
+    ["clean",0], ["jitter",0.03], ["jitter",0.08], ["jitter",0.20],
+    ["common",-0.20], ["common",0.20], ["element",0.10],
+    ["dropout",0.01], ["dropout",0.05], ["outliers",0.01]
+  ],
+  "support_conditions": [
+    {"name":"nominal","radius_scale":1.0,"shift_x_m":0.0,"taper_scale":1.0},
+    {"name":"radius_minus_5pct","radius_scale":0.95,"shift_x_m":0.0,"taper_scale":1.0},
+    {"name":"radius_plus_5pct","radius_scale":1.05,"shift_x_m":0.0,"taper_scale":1.0},
+    {"name":"center_minus_2mm","radius_scale":1.0,"shift_x_m":-0.002,"taper_scale":1.0},
+    {"name":"center_plus_2mm","radius_scale":1.0,"shift_x_m":0.002,"taper_scale":1.0},
+    {"name":"taper_half","radius_scale":1.0,"shift_x_m":0.0,"taper_scale":0.5},
+    {"name":"taper_double","radius_scale":1.0,"shift_x_m":0.0,"taper_scale":2.0}
+  ]
+}

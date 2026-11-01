@@ -1,0 +1,21 @@
+$ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
+$PACKAGE = "additional_analysis/aggregate_evaluation"
+$ROOT = "Data/new_pipeline_512_20000a"
+$OUT = "Data/aggregate_analysis_results"
+$MAT = "Data/dot_mat/Malignancy.mat"
+function RunChecked([string[]]$Arguments) {
+    & python @Arguments
+    if ($LASTEXITCODE -ne 0) { throw "Evaluation failed: $($Arguments -join ' ')" }
+}
+@("$PACKAGE/run_validation.py", "$PACKAGE/validation_config.json", $MAT) | ForEach-Object {
+    if (-not (Test-Path -LiteralPath $_ -PathType Leaf)) { throw "Missing: $_" }
+}
+$COMMON = @("--root", $ROOT, "--output", $OUT, "--geometry-mat", $MAT, "--device", "cuda")
+RunChecked (@("$PACKAGE/run_validation.py", "--phase", "preflight") + $COMMON)
+RunChecked (@("$PACKAGE/run_validation.py", "--phase", "inference") + $COMMON)
+RunChecked (@("$PACKAGE/run_validation.py", "--phase", "summarize") + $COMMON)
+RunChecked (@("$PACKAGE/run_validation.py", "--phase", "comparator") + $COMMON)
+RunChecked (@("$PACKAGE/run_validation.py", "--phase", "summarize") + $COMMON)
+RunChecked @("$PACKAGE/extract_implementation.py", "--root", $ROOT, "--output", "$OUT/implementation")
+Write-Host "[OK] Aggregate test evaluation and classical comparison completed: $OUT" -ForegroundColor Green

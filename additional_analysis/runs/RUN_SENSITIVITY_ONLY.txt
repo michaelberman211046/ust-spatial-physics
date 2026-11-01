@@ -1,0 +1,19 @@
+$ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
+# Paste from PROJECT_ROOT, e.g. Z:\myTomography_cuda, regardless of where this TXT is stored.
+$PACKAGE = "additional_analysis/reconstruction_analysis"
+$ROOT = "Data/new_pipeline_512_20000a"
+$OUT = "Data/additional_analysis_results/extended"
+$MAT = "Data/dot_mat/Malignancy.mat"
+@("$PACKAGE/run_extended.py", "$PACKAGE/extended_config.json", "$PACKAGE/rf_uncertainty.py", $MAT) | ForEach-Object {
+    if (-not (Test-Path -LiteralPath $_ -PathType Leaf)) { throw "Missing: $_" }
+}
+python -B "$PACKAGE/run_extended.py" `
+    --phase all `
+    --root "$ROOT" `
+    --output "$OUT" `
+    --geometry-mat "$MAT" `
+    --config "$PACKAGE/extended_config.json" `
+    --device cuda
+if ($LASTEXITCODE -ne 0) { throw "Extended evaluation failed with exit code $LASTEXITCODE" }
+Write-Host "[OK] Pass finished: $OUT. Check planned/completed counts in summary.json files. Rerun this command to finish budget-limited cases." -ForegroundColor Green

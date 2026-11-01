@@ -1,0 +1,6 @@
+{
+  "startup_seconds": 52.37055999999984,
+  "processed_samples": 4,
+  "note": "Warm feature construction and inference include CPU transfer of output, exclude dataset I/O and NPZ writing",
+  "batch_size": 1
+}

@@ -1,0 +1,25 @@
+{
+  "pilot_indices": [
+    6285,
+    13198,
+    4246
+  ],
+  "pilot_pair_seconds": [
+    1677.4496252000001,
+    1682.3879763999998,
+    1104.2884990000011
+  ],
+  "measured_pair_p90_seconds": 1681.40030616,
+  "planning_seconds_per_case": 2522.10045924,
+  "budget_hours": 12.0,
+  "cohort_indices": [
+    6285,
+    13198,
+    4246,
+    19444
+  ],
+  "estimated_clean_cohort_hours": 2.8023338436,
+  "scope": "Clean synthetic coarse+fine refinement and classical comparator only. Sensitivity and measured studies are additional.",
+  "policy": "Fixed test permutation prefix; 1.5x pilot 90th-percentile cost; maximum count from protocol",
+  "caveat": "Runtime is an estimate; pilot-dependent early stopping may underestimate later costs."
+}

@@ -123,3 +123,7 @@ Original code in this repository is released under the MIT License; see `LICENSE
 
 
 
+
+## Additional analysis
+
+Saved-checkpoint aggregate evaluation, bent-ray comparison, matched spatial-conditioning ablation, RF-picker tests, ToF/support/grid sensitivity studies, expanded Eikonal refinement and figure extraction are documented in [additional_analysis](additional_analysis/README.md). These additions leave the archived original source-code release unchanged.

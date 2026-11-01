@@ -1,0 +1,193 @@
+{
+  "schema": 1,
+  "selection_seed": 4647462,
+  "training_seeds": [
+    4647462
+  ],
+  "train_samples": 256,
+  "validation_samples": 64,
+  "test_samples": 0,
+  "epochs": 6,
+  "batch_size": 2,
+  "variants": [
+    "full",
+    "without_residual_maps"
+  ],
+  "tof_loss_weight": null,
+  "cache_dtype": "float32",
+  "benchmark_steps": 8,
+  "progress_every": 10,
+  "bootstrap_replicates": 1000,
+  "protocol_design": "Evaluation-only RF picking stability, ToF robustness, support and grid sensitivity, and expanded original-model Eikonal refinement",
+  "studies": {
+    "refinement_samples": 20,
+    "sensitivity_samples": 20,
+    "synthetic_grid_samples": 2,
+    "refinement_budget_hours": 12.0,
+    "support_budget_hours": 5.0,
+    "grid_budget_hours": 6.0,
+    "rf_channels": 512,
+    "rf_repeats": 20,
+    "rf_noise_scales": [
+      0.0,
+      0.5,
+      1.0,
+      2.0
+    ],
+    "rf_delays_us": [
+      -0.25,
+      0.04,
+      0.25
+    ],
+    "rf_bootstrap_template": true,
+    "rf_baseline_tolerance_us": 0.01,
+    "rf_baseline_min_match_fraction": 0.99,
+    "tof_conditions": [
+      [
+        "clean",
+        0.0
+      ],
+      [
+        "jitter",
+        0.03
+      ],
+      [
+        "jitter",
+        0.08
+      ],
+      [
+        "jitter",
+        0.2
+      ],
+      [
+        "common",
+        -0.2
+      ],
+      [
+        "common",
+        0.2
+      ],
+      [
+        "element",
+        0.1
+      ],
+      [
+        "dropout",
+        0.05
+      ]
+    ],
+    "support_conditions": [
+      {
+        "name": "nominal",
+        "radius_scale": 1.0,
+        "shift_x_m": 0.0,
+        "shift_y_m": 0.0,
+        "taper_scale": 1.0
+      },
+      {
+        "name": "radius_minus_5pct",
+        "radius_scale": 0.95,
+        "shift_x_m": 0.0,
+        "shift_y_m": 0.0,
+        "taper_scale": 1.0
+      },
+      {
+        "name": "radius_plus_5pct",
+        "radius_scale": 1.05,
+        "shift_x_m": 0.0,
+        "shift_y_m": 0.0,
+        "taper_scale": 1.0
+      },
+      {
+        "name": "center_x_minus_2mm",
+        "radius_scale": 1.0,
+        "shift_x_m": -0.002,
+        "shift_y_m": 0.0,
+        "taper_scale": 1.0
+      },
+      {
+        "name": "center_x_plus_2mm",
+        "radius_scale": 1.0,
+        "shift_x_m": 0.002,
+        "shift_y_m": 0.0,
+        "taper_scale": 1.0
+      },
+      {
+        "name": "center_y_minus_2mm",
+        "radius_scale": 1.0,
+        "shift_x_m": 0.0,
+        "shift_y_m": -0.002,
+        "taper_scale": 1.0
+      },
+      {
+        "name": "center_y_plus_2mm",
+        "radius_scale": 1.0,
+        "shift_x_m": 0.0,
+        "shift_y_m": 0.002,
+        "taper_scale": 1.0
+      },
+      {
+        "name": "taper_half",
+        "radius_scale": 1.0,
+        "shift_x_m": 0.0,
+        "shift_y_m": 0.0,
+        "taper_scale": 0.5
+      },
+      {
+        "name": "taper_double",
+        "radius_scale": 1.0,
+        "shift_x_m": 0.0,
+        "shift_y_m": 0.0,
+        "taper_scale": 2.0
+      }
+    ],
+    "forward_grids": [
+      100,
+      200,
+      400
+    ],
+    "forward_reference_grid": 801,
+    "forward_emitters": 16,
+    "forward_receivers": 128,
+    "reconstruction_grids": [
+      100,
+      200,
+      300
+    ],
+    "coarse": {
+      "angular_sectors": 8,
+      "holdout_sectors": "0,2,4,6",
+      "outer_iterations": 3,
+      "inner_steps": 50,
+      "correction_grid": 64,
+      "lr": 0.05,
+      "update_limit_mps": 15.0,
+      "huber_beta_us": 0.2,
+      "prior_weight": 0.15,
+      "tv_weight": 0.02,
+      "curvature_weight": 0.01,
+      "min_holdout_improvement_us": 0.005,
+      "trace_step_pixels": 0.75,
+      "trace_max_steps": 420
+    },
+    "fine": {
+      "angular_sectors": 8,
+      "holdout_sectors": "0,2,4,6",
+      "fine_iterations": 2,
+      "inner_steps": 45,
+      "fine_grid": 96,
+      "lr": 0.035,
+      "fine_limit_mps": 7.0,
+      "huber_beta_us": 0.15,
+      "prior_weight": 0.22,
+      "edge_tv_weight": 0.035,
+      "curvature_weight": 0.012,
+      "min_holdout_improvement_us": 0.002,
+      "min_accepted_folds": 2,
+      "trace_step_pixels": 0.65,
+      "trace_max_steps": 480
+    },
+    "emitter_stride": 4,
+    "receiver_stride": 2
+  }
+}

@@ -1,0 +1,23 @@
+$ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
+$PACKAGE = "additional_analysis/initial_refinement"
+$ROOT = "Data/new_pipeline_512_20000a"
+$OUT = "Data/initial_refinement_results"
+$MAT = "Data/dot_mat/Malignancy.mat"
+$DEVICE = "cuda"
+function RunChecked([string[]]$Arguments) {
+    & python @Arguments
+    if ($LASTEXITCODE -ne 0) { throw "Validation command failed: $($Arguments -join ' ')" }
+}
+@("$PACKAGE/run_validation.py", "$PACKAGE/validation_config.json", $MAT) | ForEach-Object {
+    if (-not (Test-Path -LiteralPath $_ -PathType Leaf)) { throw "Missing: $_" }
+}
+$COMMON = @("--root", $ROOT, "--output", $OUT, "--geometry-mat", $MAT, "--device", $DEVICE)
+RunChecked (@("$PACKAGE/run_validation.py", "--phase", "preflight") + $COMMON)
+RunChecked (@("$PACKAGE/run_validation.py", "--phase", "inference") + $COMMON)
+RunChecked (@("$PACKAGE/run_validation.py", "--phase", "pilot") + $COMMON)
+RunChecked (@("$PACKAGE/run_validation.py", "--phase", "studies") + $COMMON)
+RunChecked (@("$PACKAGE/run_validation.py", "--phase", "measured") + $COMMON)
+RunChecked (@("$PACKAGE/run_validation.py", "--phase", "summarize") + $COMMON)
+RunChecked @("$PACKAGE/extract_implementation.py", "--root", $ROOT, "--output", "$OUT/implementation")
+Write-Host "[OK] analysis evaluation completed. Results: $OUT" -ForegroundColor Green

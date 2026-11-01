@@ -1,0 +1,32 @@
+$ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
+# Paste from the CUDA project root, for example Z:\myTomography_cuda.
+$PACKAGE = "additional_analysis/reconstruction_analysis"
+$ROOT = "Data/new_pipeline_512_20000a"
+$OUT = "Data/additional_analysis_results/ablation"
+$MAT = "Data/dot_mat/Malignancy.mat"
+@("$PACKAGE/run_ablation.py", "$PACKAGE/ablation_config.json", "$PACKAGE/engine/train_spatial_physics.py", $MAT) | ForEach-Object {
+    if (-not (Test-Path -LiteralPath $_ -PathType Leaf)) { throw "Missing: $_" }
+}
+
+python -B "$PACKAGE/run_ablation.py" `
+    --phase all `
+    --root "$ROOT" `
+    --output "$OUT" `
+    --geometry-mat "$MAT" `
+    --config "$PACKAGE/ablation_config.json" `
+    --device cuda
+if ($LASTEXITCODE -ne 0) { throw "Ablation all failed with exit code $LASTEXITCODE" }
+Write-Host "[OK] Results: $OUT" -ForegroundColor Green
+
+# Evaluation of RF picking, ToF robustness, support/grid effects and enlarged refinement.
+$EXTENDED_OUT = "Data/additional_analysis_results/extended"
+python -B "$PACKAGE/run_extended.py" `
+    --phase all `
+    --root "$ROOT" `
+    --output "$EXTENDED_OUT" `
+    --geometry-mat "$MAT" `
+    --config "$PACKAGE/extended_config.json" `
+    --device cuda
+if ($LASTEXITCODE -ne 0) { throw "Extended evaluation failed with exit code $LASTEXITCODE" }
+Write-Host "[OK] Check planned/completed counts under $EXTENDED_OUT; repeat the additional-tests command if a wall-time budget paused a study." -ForegroundColor Green

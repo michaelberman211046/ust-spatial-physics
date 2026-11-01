@@ -1,0 +1,24 @@
+{
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.13.13 | packaged by Anaconda, Inc. | (main, Apr 14 2026, 06:12:50) [MSC v.1942 64 bit (AMD64)]",
+  "processor": "Intel64 Family 6 Model 198 Stepping 2, GenuineIntel",
+  "cpu_count": 24,
+  "ram_bytes": null,
+  "packages": {
+    "torch": "2.11.0+cu128",
+    "numpy": "2.5.2",
+    "scipy": "1.17.1",
+    "scikit-fmm": "2025.6.23",
+    "h5py": "3.16.0",
+    "matplotlib": "3.10.9"
+  },
+  "gpus": [
+    {
+      "index": 0,
+      "name": "NVIDIA RTX PRO 2000 Blackwell",
+      "memory_bytes": 17102864384
+    }
+  ],
+  "torch_cuda": "13.0",
+  "cudnn": 92400
+}

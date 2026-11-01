@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "selection_seed": 4647462,
+  "training_seeds": [
+    4647462
+  ],
+  "train_samples": 256,
+  "validation_samples": 64,
+  "test_samples": 0,
+  "epochs": 6,
+  "batch_size": 2,
+  "variants": [
+    "full",
+    "without_residual_maps"
+  ],
+  "tof_loss_weight": null,
+  "cache_dtype": "float32",
+  "benchmark_steps": 8,
+  "progress_every": 10,
+  "bootstrap_replicates": 1000
+}

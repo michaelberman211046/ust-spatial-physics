@@ -1,0 +1,58 @@
+$ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
+
+function Need([string]$PathName) {
+    if (-not (Test-Path -LiteralPath $PathName -PathType Leaf)) {
+        throw "Missing required saved output: $PathName"
+    }
+}
+
+# Paste this command while PowerShell is at the repository root:
+# PS Z:\myTomography_cuda>
+$ROOT = "Data/new_pipeline_512_20000a"
+$TRAIN = "$ROOT/training_v28"
+$EXP = "$ROOT/experiment_run/experimental_geometry_v28"
+$OUTPUT = "$ROOT/publication_figures_additional_analysis"
+$GENERATOR = "additional_analysis/figures/generate_analysis_figures.py"
+
+$SYNTHETIC_SUPERVISED = "$TRAIN/myOutputs_stage8_test_split/stage8_test_report.npz"
+$SYNTHETIC_REFINED = "$TRAIN/myOutputs_stage8e3_test_split/stage8e3_test_eikonal_refinement_report.npz"
+$SYNTHETIC_DATA = "$TRAIN/ultrasound_data_20000_pairs.pt"
+
+$MEASURED_BASE = "$EXP/physical_report.npz"
+$MEASURED_REFINED = "$EXP/myOutputs_stage10e3_corrected/stage10e3_experimental_eikonal_refinement_report.npz"
+$MEASURED_TOF = "$EXP/experimental_aligned.pt"
+
+@(
+    $GENERATOR,
+    $SYNTHETIC_SUPERVISED,
+    $SYNTHETIC_REFINED,
+    $SYNTHETIC_DATA,
+    $MEASURED_BASE,
+    $MEASURED_REFINED,
+    $MEASURED_TOF
+) | ForEach-Object {
+    Need $_
+}
+
+New-Item -ItemType Directory -Force -Path $OUTPUT | Out-Null
+
+python "$GENERATOR" `
+    --synthetic-supervised-report "$SYNTHETIC_SUPERVISED" `
+    --synthetic-refined-report "$SYNTHETIC_REFINED" `
+    --measured-base-report "$MEASURED_BASE" `
+    --measured-refined-report "$MEASURED_REFINED" `
+    --synthetic-data-pt "$SYNTHETIC_DATA" `
+    --measured-tof "$MEASURED_TOF" `
+    --sample-index 6796 `
+    --include-error-maps `
+    --output-dir "$OUTPUT"
+
+if ($LASTEXITCODE -ne 0) {
+    throw "Publication-figure extraction failed with exit code $LASTEXITCODE"
+}
+
+Write-Host "[OK] Held-out synthetic test provenance verified." -ForegroundColor Green
+Write-Host "[OK] Publication figures written to $OUTPUT" -ForegroundColor Green
+
+
